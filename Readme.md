@@ -1,4 +1,4 @@
-# Multiple EC2 with Multiple Regions
+# Multiple EC2 with Multiple Regions Using Terraform
 
 
 ## Used
