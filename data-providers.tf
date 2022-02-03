@@ -1,10 +1,10 @@
 provider "aws" {
-  alias = "us"
+  alias  = "us"
   region = "us-east-1"
 }
 
 provider "aws" {
-  alias = "mu"
+  alias  = "mu"
   region = "ap-south-1"
 }
 data "aws_subnet_ids" "default_subnets" {
@@ -21,19 +21,19 @@ data "aws_ami" "aws_linux_2_latest" {
 }
 data "aws_ami" "ubuntu" {
 
-    most_recent = true
+  most_recent = true
 
-    filter {
-        name   = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-    }
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
 
-    filter {
-        name = "virtualization-type"
-        values = ["hvm"]
-    }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 
-    owners = ["099720109477"]
+  owners = ["099720109477"]
 }
 
 

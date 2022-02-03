@@ -1,16 +1,16 @@
 module "us" {
-    source = "./module/vpc_module/"
-    providers = {
-      aws = aws.us
-     }
-    //vpc_id = aws_default_vpc.default.id
+  source = "./module/vpc_module/"
+  providers = {
+    aws = aws.us
+  }
+  //vpc_id = aws_default_vpc.default.id
 }
 module "mu" {
-    source = "./module/vpc_module/"
-    providers = {
-      aws = aws.mu
-     }
-    //vpc_id = aws_default_vpc.default.id
+  source = "./module/vpc_module/"
+  providers = {
+    aws = aws.mu
+  }
+  //vpc_id = aws_default_vpc.default.id
 }
 
 resource "aws_default_vpc" "default" {
@@ -49,10 +49,10 @@ resource "aws_security_group" "nginx_server_sg" {
 }
 
 resource "aws_instance" "nginx_server" {
-    count = 2
-  
+  count = 2
+
   #ami                   = "ami-062f7200baf2fa504"
-  ami                    = "${data.aws_ami.ubuntu.id}" 
+  ami = data.aws_ami.ubuntu.id
   //ami = lookup(var.ec2_ami,var.region) 
   key_name               = "terraform"
   instance_type          = "t2.micro"
@@ -72,16 +72,19 @@ resource "aws_instance" "nginx_server" {
     # starting with the distinct index number 0 and corresponding to this instance.
     Name = "nginx-machine-${count.index}"
   }
+  provisioner "file" {
+    source      = "./bash/cron.sh"
+    destination = "/tmp/cron.sh"
+  }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt update",
-      "sudo apt install nginx -y",
-      "sudo service ngnix start",
-      "echo Welcome to Nginx-Server - Virtual Server is at ${self.public_dns} | sudo tee /var/www/html/index.html",
-      //"(crontab -l 2>/dev/null; echo " 0 1 * * * init 0 ") | crontab -"
-      
+      "chmod +x /tmp/cron.sh",
+      "/tmp/cron.sh"
+
+
     ]
-     
-  }
+    
+
+}
 }
