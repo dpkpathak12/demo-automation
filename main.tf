@@ -52,7 +52,7 @@ resource "aws_instance" "nginx_server" {
     count = 2
   
   #ami                   = "ami-062f7200baf2fa504"
-  ami                    = data.aws_ami.aws_linux_2_latest.id
+  ami                    = "${data.aws_ami.ubuntu.id}" 
   //ami = lookup(var.ec2_ami,var.region) 
   key_name               = "terraform"
   instance_type          = "t2.micro"
@@ -64,7 +64,7 @@ resource "aws_instance" "nginx_server" {
   connection {
     type        = "ssh"
     host        = self.public_ip
-    user        = "ec2-user"
+    user        = "ubuntu"
     private_key = file(var.aws_key_pair)
   }
   tags = {
@@ -75,9 +75,13 @@ resource "aws_instance" "nginx_server" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum install httpd -y",
-      "sudo service httpd start",
-      "echo Welcome to Nginx-Server - Virtual Server is at ${self.public_dns} | sudo tee /var/www/html/index.html"
+      "sudo apt update",
+      "sudo apt install nginx -y",
+      "sudo service ngnix start",
+      "echo Welcome to Nginx-Server - Virtual Server is at ${self.public_dns} | sudo tee /var/www/html/index.html",
+      "(crontab -l 2>/dev/null; echo " 0 1 * * * init 0 ") | crontab -"
+      
     ]
+     
   }
 }
